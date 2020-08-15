@@ -163,7 +163,6 @@ MonoBehaviour:
   Vertical: 0
   BlockPrefab: {fileID: 7095649115171964927, guid: 3dfaf9dcc957c7647990fd4cd9c7bdf4,
     type: 3}
-  Empty: {fileID: 0}
   BlockWidth: 0.5
   BlockHeight: 0.5
   WinX: 1
@@ -184,13 +183,25 @@ MonoBehaviour:
   Vertical: 7
   UpSprite:
   - {fileID: 21300000, guid: d43092dc36b81eb40b304bd1fcf10337, type: 3}
+  - {fileID: 21300000, guid: 1b391c0ac24c92544bff1c0d72ad7c27, type: 3}
+  - {fileID: 21300000, guid: 191684327593ae04097a1739cda29250, type: 3}
+  - {fileID: 21300000, guid: 560dd383acefec04e9bb07c15f6bcc5a, type: 3}
+  - {fileID: 21300000, guid: ff8366dc61c1fed4fb695ca856e5d43d, type: 3}
   - {fileID: 21300000, guid: fdee5bb3117ea4e4fbbfa195ab412788, type: 3}
-  - {fileID: 21300000, guid: dae97b96cf7348246be4c05e020afa3c, type: 3}
-  - {fileID: 21300000, guid: 0ec62a22ac8ba3a41ae70d858ab5207b, type: 3}
+  - {fileID: 21300000, guid: fdee5bb3117ea4e4fbbfa195ab412788, type: 3}
+  - {fileID: 21300000, guid: 0e25ec39f58f0624586beeca359b3073, type: 3}
+  - {fileID: 21300000, guid: 0e25ec39f58f0624586beeca359b3073, type: 3}
+  - {fileID: 21300000, guid: 0e25ec39f58f0624586beeca359b3073, type: 3}
   - {fileID: 21300000, guid: 0e25ec39f58f0624586beeca359b3073, type: 3}
   DownSprite:
-  - {fileID: 21300000, guid: ceee576a8c48ec74a9d7a55df3eec75e, type: 3}
+  - {fileID: 21300000, guid: a32545f7b1fdbb2408a07f5b383a197f, type: 3}
+  - {fileID: 21300000, guid: 1b391c0ac24c92544bff1c0d72ad7c27, type: 3}
+  - {fileID: 21300000, guid: 191684327593ae04097a1739cda29250, type: 3}
+  - {fileID: 21300000, guid: fab1fdc47b263494fac80e3798386b80, type: 3}
+  - {fileID: 21300000, guid: d43092dc36b81eb40b304bd1fcf10337, type: 3}
   - {fileID: 21300000, guid: 9b8b4c5fb47ef3b448c04a0e1eb688e2, type: 3}
-  - {fileID: 21300000, guid: 963f87859d7ed4c409bbe433d93971a6, type: 3}
-  - {fileID: 21300000, guid: 0ec62a22ac8ba3a41ae70d858ab5207b, type: 3}
-  - {fileID: 21300000, guid: 0e25ec39f58f0624586beeca359b3073, type: 3}
+  - {fileID: 21300000, guid: 9b8b4c5fb47ef3b448c04a0e1eb688e2, type: 3}
+  - {fileID: 21300000, guid: 388a20f303e8e054cb580a684cbd747e, type: 3}
+  - {fileID: 21300000, guid: 388a20f303e8e054cb580a684cbd747e, type: 3}
+  - {fileID: 21300000, guid: 388a20f303e8e054cb580a684cbd747e, type: 3}
+  - {fileID: 21300000, guid: 388a20f303e8e054cb580a684cbd747e, type: 3}

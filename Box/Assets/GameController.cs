@@ -80,7 +80,9 @@ public class GameController : SingletonBase<GameController>
     {
         bool flag = true;
         Queue<int> qx = new Queue<int>(), qy = new Queue<int>();
+        List<Block> BlockToMove = new List<Block>();
         HashSet<Tuple<int, int>> hashmap = new HashSet<Tuple<int, int>>();
+        hashmap.Add(new Tuple<int, int>(human_x, human_y));
         qx.Enqueue(human_x);
         qy.Enqueue(human_y);
         while (qx.Count != 0)
@@ -90,6 +92,7 @@ public class GameController : SingletonBase<GameController>
             //print("Now Pro " + nowx.ToString() + " " + nowy.ToString());
             qx.Dequeue();
             qy.Dequeue();
+            if (block_map[nowx, nowy, Human.z].type != 0) BlockToMove.Add(block_map[nowx, nowy, Human.z]);
             int new_x = nowx + dx[Dir];
             int new_y = nowy + dy[Dir];
             if (new_x < 0 || new_x >= Vertical || new_y < 0 || new_y >= Horizontal)
@@ -97,14 +100,15 @@ public class GameController : SingletonBase<GameController>
                 flag = false;
                 break;
             }
+            int t = block_map[new_x, new_y, Human.z].type;
+
             if (hashmap.Contains(new Tuple<int, int>(new_x, new_y))) continue;
             hashmap.Add(new Tuple<int, int>(new_x, new_y));
-            int t = block_map[new_x, new_y, Human.z].type;
             if (t == 0)
             {
                 continue;
             }
-            else if (t == 4)
+            if (t == 4)
             {
                 flag = false; break;
             }
@@ -112,7 +116,7 @@ public class GameController : SingletonBase<GameController>
             {
                 qx.Enqueue(new_x);
                 qy.Enqueue(new_y);
-                if (t >= 5)
+                if (t >= 5 && t <= 10)
                 {
                     for (int i = 0; i < Vertical; i++)
                         for (int j = 0; j < Horizontal; j++)
@@ -123,9 +127,24 @@ public class GameController : SingletonBase<GameController>
                                     {
                                         qx.Enqueue(i);
                                         qy.Enqueue(j);
+                                        hashmap.Add(new Tuple<int, int>(i, j));
                                     }
                             }
                 }
+            }
+        }
+        if (flag)
+        {
+            BlockToMove.Sort((a, b) => ((b.x * dx[Dir]) + (b.y * dy[Dir])).CompareTo((a.x * dx[Dir]) + (a.y * dy[Dir])));
+            foreach (var m_block in BlockToMove)
+            {
+                int new_x = m_block.x + dx[Dir];
+                int new_y = m_block.y + dy[Dir];
+                //print("queue " + m_block.x + " " + m_block.y);
+                if (!(new_x >= 0 && new_x < Vertical && new_y >= 0 && new_y < Horizontal)) continue;
+                block_map[new_x, new_y, Human.z].ChangeToType(m_block.type);
+                m_block.ChangeToType(0);
+
             }
         }
         return flag;
@@ -137,11 +156,14 @@ public class GameController : SingletonBase<GameController>
     private int[] dy = { 0, 0, -1, 1 };
     private void Move(int Dir)
     {
-
+        int oldx = human_x;
+        int oldy = human_y;
+        int oldz = Human.z;
         if (BFSMove(Dir))
         {
 
-            Human.Move(Dir);
+            if (block_map[oldx, oldy, 1].type == 2 && oldz == 0)
+                block_map[oldx, oldy, 1].ChangeToType(0);
             //Move Audio
         }
         else
@@ -169,6 +191,18 @@ public class GameController : SingletonBase<GameController>
         if (new_x >= 0 && new_x < Vertical && new_y >= 0 && new_y < Horizontal)
             if ()*/
     }
+    List<Block> GetFriend(Block m_block)
+    {
+        List<Block> l = new List<Block>();
+        for (int i = 0; i < Vertical; i++)
+            for (int j = 0; j < Horizontal; j++)
+                for (int k = 0; k < 2; k++)
+                {
+                    if (block_map[i, j, k].type == m_block.type)
+                        l.Add(block_map[i, j, k]);
+                }
+        return l;
+    }
     void CheckDown()
     {
         for (int i = 0; i < Vertical; i++)
@@ -181,7 +215,30 @@ public class GameController : SingletonBase<GameController>
                     block_map[i, j, 1].ChangeToType(t);
                     block_map[i, j, 0].ChangeToType(0);
                 }
+                else if (t >= 5 && t <= 10)
+                {
+                    bool flag = true;
+                    var m_block = block_map[i, j, 0];
+                    var friend = GetFriend(m_block);
+                    foreach (var temp in friend)
+                    {
+                        if (block_map[temp.x, temp.y, 1].type != 0)
+                        {
+                            flag = false;
+                            break;
+                        }
+                    }
+                    if (flag)
+                    {
+                        int name = m_block.type;
+                        foreach (var temp in friend)
+                        {
+                            block_map[temp.x, temp.y, 1].ChangeToType(name);
+                            block_map[temp.x, temp.y, 0].ChangeToType(0);
+                        }
+                    }
 
+                }
             }
     }
 }

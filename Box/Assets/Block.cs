@@ -11,8 +11,8 @@ public class Block : MonoBehaviour
     public int x, y, z;
     public int type = 0;
     private int _type;
-    [HideInInspector]
-    public List<Block> friend;
+    //[HideInInspector]
+    //public List<Block> friend;
 
     public bool NeedToBeUpdate()
     {
@@ -25,15 +25,10 @@ public class Block : MonoBehaviour
         z = _z;
         ChangeToType(_t);
     }
-    public void ChangeToType(int target)
+    /*
+    void UpdateFriend()
     {
-        //print(x.ToString());
-        //print(y.ToString());
-        //print(target);
-        //print("Change!");
         friend.Clear();
-        _type = target;
-        type = target;
         if (type >= 5 && type <= 10)
         {
             for (int k = 0; k < 2; k++)
@@ -44,13 +39,25 @@ public class Block : MonoBehaviour
                         if (GameController.Instance.block_map[i, j, k].type == type)
                         {
                             friend.Add(GameController.Instance.block_map[i, j, k]);
-                            GameController.Instance.block_map[i, j, k].friend.Add(this);
+                            if (!GameController.Instance.block_map[i, j, k].friend.Contains(this))
+                                GameController.Instance.block_map[i, j, k].friend.Add(this);
                         }
 
 
                     }
             }
         }
+    }
+    */
+    public void ChangeToType(int target)
+    {
+        //print(x.ToString());
+        //print(y.ToString());
+        //print(target);
+        //print("Change!");
+        //friend.Clear();
+        _type = target;
+        type = target;
         //print(z);
         if (z == 1)
             GetComponent<SpriteRenderer>().sprite = GameController.Instance.DownSprite[_type];
@@ -111,30 +118,50 @@ public class Block : MonoBehaviour
     */
     public int Move(int Dir, bool force = false)
     {
+        print("Debug " + x.ToString() + " " + y.ToString());
         int new_x = x + dx[Dir];
         int new_y = y + dy[Dir];
-        if (!(new_x >= 0 && new_x < GameController.Instance.Vertical && new_y >= 0 && new_y < GameController.Instance.Vertical)) return -1;
+        if (!(new_x >= 0 && new_x < GameController.Instance.Vertical && new_y >= 0 && new_y < GameController.Instance.Horizontal)) return -1;
         if (type == 0 || type == 5)
             return 1;
-        if (type == 1 || type == 2 || type == 3 || (type >= 5 && type <= 10 && force))
+        if (type == 1 || type == 2 || type == 3 /*|| (type >= 5 && type <= 10 && force)*/)
         {
-            GameController.Instance.block_map[new_x, new_y, z].Move(Dir);
+            GameController.Instance.block_map[new_x, new_y, z].Move(Dir, force);
             GameController.Instance.block_map[new_x, new_y, z].ChangeToType(type);
             GameController.Instance.block_map[x, y, z].ChangeToType(0);
         }
+        /*
+        if (type >= 5 && type <= 10)
+        {
+            GameController.Instance.block_map[new_x, new_y, z].Move(Dir, force);
+            int tmptype = type;
+            GameController.Instance.block_map[x, y, z].ChangeToType(0);
+            for (int i = 0; i < 4; i++)
+            {
+                if (GameController.Instance.block_map[x + dx[i], y + dy[i], z].type == tmptype)
+                    GameController.Instance.block_map[x + dx[i], y + dy[i], z].Move(Dir);
+            }
+            GameController.Instance.block_map[new_x, new_y, z].ChangeToType(tmptype);
+            
+        }
+        */
+        /*
         if (type >= 5 && type <= 10 && (!force))
         {
-            friend.Sort((a, b) => (a.x * dx[Dir]) + (a.y * dy[Dir]).CompareTo((b.x * dx[Dir]) + (b.y * dy[Dir])));
-            foreach (var m_block in friend)
+            friend.Sort((a, b) => ((b.x * dx[Dir]) + (b.y * dy[Dir])).CompareTo((a.x * dx[Dir]) + (a.y * dy[Dir])));
+            var CopyList = new List<Block>(friend);
+            foreach (var m_block in CopyList)
             {
-
+                //print("X: " + m_block.x.ToString() + " Y: " + m_block.y.ToString());
                 int tx = m_block.x + dx[Dir];
                 int ty = m_block.y + dy[Dir];
-                GameController.Instance.block_map[tx, ty, z].Move(Dir);
-                //GameController.Instance.block_map[tx, ty, z].ChangeToType(type);
+                GameController.Instance.block_map[tx, ty, z].Move(Dir, true);
+                GameController.Instance.block_map[tx, ty, z].ChangeToType(type);
                 GameController.Instance.block_map[m_block.x, m_block.y, z].ChangeToType(0);
             }
+            print("END");
         }
+        */
         return 0;
     }
 }
