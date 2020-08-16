@@ -53,8 +53,20 @@ public class GameController : SingletonBase<GameController>
     private Text WinText;
     bool isWin = false;
     private List<int[,,]> OldMap = new List<int[,,]>();
+    private AudioSource box_push, carton_crack, carton_drop, walk, wood_drop, fail;
+    public bool isWhite = false;
+    public Image OldImage, NewImage;
     private void Start()
     {
+        box_push = transform.Find("box_push").GetComponent<AudioSource>();
+        carton_crack = transform.Find("carton_crack").GetComponent<AudioSource>();
+        carton_drop = transform.Find("carton_drop").GetComponent<AudioSource>();
+        walk = transform.Find("walk").GetComponent<AudioSource>();
+        wood_drop = transform.Find("wood_drop").GetComponent<AudioSource>();
+        fail = transform.Find("fail").GetComponent<AudioSource>();
+        OldImage = GameObject.FindGameObjectWithTag("Image").GetComponent<Image>();
+        NewImage = GameObject.FindGameObjectWithTag("NewImage").GetComponent<Image>();
+
         WinText = GameObject.FindGameObjectWithTag("WinText").GetComponent<Text>();
         WinText.color = Color.clear;
         Horizontal = GameObject.FindObjectOfType<EditorSpawn>().Horizontal;
@@ -121,6 +133,12 @@ public class GameController : SingletonBase<GameController>
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         if (Input.GetKeyDown(KeyCode.Z))
             Undo();
+        if (Input.GetKeyDown(KeyCode.N))
+            if (SceneManager.GetActiveScene().buildIndex + 1 < SceneManager.sceneCountInBuildSettings)
+                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        if (Input.GetKeyDown(KeyCode.P))
+            if (SceneManager.GetActiveScene().buildIndex - 1 >= 1)
+                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex - 1);
     }
     bool BFSMove(int Dir)
     {
@@ -183,6 +201,7 @@ public class GameController : SingletonBase<GameController>
                 }
             }
         }
+
         if (num > 2) flag = false;
         if (Human.z == 0)
             if ((block_map[human_x + dx[Dir], human_y + dy[Dir], 1].type == 0))
@@ -190,6 +209,9 @@ public class GameController : SingletonBase<GameController>
 
         if (flag)
         {
+            //if (num > 1) box_push.Play();
+            //else 
+            walk.Play();
             OldMap.Add(new int[Vertical, Horizontal, 2]);
             for (int i = 0; i < Vertical; i++)
                 for (int j = 0; j < Horizontal; j++)
@@ -211,6 +233,7 @@ public class GameController : SingletonBase<GameController>
 
             }
         }
+        else fail.Play();
         return flag;
 
     }
@@ -234,7 +257,10 @@ public class GameController : SingletonBase<GameController>
 
             int t = block_map[oldx, oldy, 1].type;
             if (t == 2 && oldz == 0)
+            {
+                carton_crack.Play();
                 block_map[oldx, oldy, 1].ChangeToType(0);
+            }
 
             if (t >= 5 && t <= 7 && oldz == 0 && block_map[human_x, human_y, 1].type != t)
                 foreach (var m_block in GetFriend(block_map[oldx, oldy, 1]))
@@ -268,8 +294,13 @@ public class GameController : SingletonBase<GameController>
     IEnumerator Win()
     {
         isWin = true;
-        WinText.DOFade(1, 1f);
-        yield return new WaitForSeconds(1);
+        OldImage.color = new Color(1, 1, 1, 0);
+        NewImage.color = new Color(1, 1, 1, 0);
+        //WinText.DOFade(1, 1f);
+        OldImage.DOFade(1, 0.3f);
+        yield return new WaitForSeconds(0.3f);
+        NewImage.DOFade(1, 1.75f);
+        yield return new WaitForSeconds(2.5f);
         if (SceneManager.GetActiveScene().buildIndex + 1 < SceneManager.sceneCountInBuildSettings)
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
@@ -284,6 +315,8 @@ public class GameController : SingletonBase<GameController>
                 {
                     block_map[i, j, 1].ChangeToType(t);
                     block_map[i, j, 0].ChangeToType(0);
+                    if (t == 1) wood_drop.Play();
+                    else if (t == 2) carton_drop.Play();
                 }
                 else if (t >= 5 && t <= 10)
                 {
@@ -300,6 +333,8 @@ public class GameController : SingletonBase<GameController>
                     }
                     if (flag)
                     {
+                        if (t <= 7) carton_drop.Play();
+                        else wood_drop.Play();
                         int name = m_block.type;
                         foreach (var temp in friend)
                         {

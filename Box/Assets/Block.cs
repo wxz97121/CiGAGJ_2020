@@ -49,6 +49,10 @@ public class Block : MonoBehaviour
         }
     }
     */
+    private void Start()
+    {
+        ChangeToType(type);
+    }
     public void ChangeToType(int target)
     {
         //print(x.ToString());
@@ -63,8 +67,17 @@ public class Block : MonoBehaviour
         if (z == 1)
         {
             GetComponent<SpriteRenderer>().sprite = GameController.Instance.DownSprite[_type];
-            GetComponent<SpriteRenderer>().sortingOrder = -10;
-            if (type != 4) GetComponent<SpriteRenderer>().sortingOrder = -5;
+            if (type == 4)
+                GetComponent<SpriteRenderer>().sortingOrder = -10;
+            else if (type == 0) GetComponent<SpriteRenderer>().sortingOrder = -7;
+            else GetComponent<SpriteRenderer>().sortingOrder = -3;
+            if (Application.isPlaying)
+            {
+                if (type==4 && GameController.Instance.isWhite==false)
+                {
+                    GetComponent<SpriteRenderer>().color = Color.clear;
+                }
+            }
         }
         if (z == 0)
         {

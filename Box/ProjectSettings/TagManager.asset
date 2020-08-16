@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - WinText
+  - Image
+  - NewImage
   layers:
   - Default
   - TransparentFX
