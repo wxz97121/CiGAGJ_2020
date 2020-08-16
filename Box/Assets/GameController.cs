@@ -1,8 +1,10 @@
-﻿using System;
+﻿using DG.Tweening;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class SingletonBase<T> : MonoBehaviour where T : MonoBehaviour
 {
@@ -39,19 +41,32 @@ public class SingletonBase<T> : MonoBehaviour where T : MonoBehaviour
 public class GameController : SingletonBase<GameController>
 {
     public Block[,,] block_map;
-    private int human_x, human_y, row, line, win_x, win_y;
+    private int human_x, human_y, row, line;
+    [HideInInspector]
+    public int win_x, win_y;
     [HideInInspector]
     public int Horizontal = 7, Vertical = 7;
     Block Human;
     public Sprite[] UpSprite, DownSprite;
+    public bool UseWinSprite;
+    public Sprite WinSprite;
+    private Text WinText;
+    bool isWin = false;
+    private List<int[,,]> OldMap = new List<int[,,]>();
     private void Start()
     {
+        WinText = GameObject.FindGameObjectWithTag("WinText").GetComponent<Text>();
+        WinText.color = Color.clear;
         Horizontal = GameObject.FindObjectOfType<EditorSpawn>().Horizontal;
         Vertical = GameObject.FindObjectOfType<EditorSpawn>().Vertical;
         win_x = GameObject.FindObjectOfType<EditorSpawn>().WinX;
         win_y = GameObject.FindObjectOfType<EditorSpawn>().WinY;
         block_map = new Block[Vertical, Horizontal, 2];
         //block_map = new Block[row, line, 2];
+        UpdateHuman();
+    }
+    void UpdateHuman()
+    {
         foreach (var m_block in FindObjectsOfType<Block>())
         {
             block_map[m_block.x, m_block.y, m_block.z] = m_block;
@@ -63,8 +78,37 @@ public class GameController : SingletonBase<GameController>
             }
         }
     }
+    void Undo()
+    {
+        if (OldMap.Count == 0) return;
+        print("UNDO");
+        //block_map = OldMap[OldMap.Count - 1];
+
+        for (int i = 0; i < Vertical; i++)
+            for (int j = 0; j < Horizontal; j++)
+                for (int k = 0; k < 2; k++)
+                {
+                    //if (block_map[i, j, k].NeedToBeUpdate()) print("Debug "+i.ToString()+" "+j.ToString());
+                    block_map[i, j, k].ChangeToType(OldMap[OldMap.Count - 1][i, j, k]);
+                }
+        OldMap.RemoveAt(OldMap.Count - 1);
+        UpdateHuman();
+    }
     private void Update()
     {
+        if (UseWinSprite)
+        {
+
+            if (block_map[win_x, win_y, 0].type == 0)
+            {
+
+                //print("Debug " + win_x.ToString() + " " + win_y.ToString());
+                //print(block_map[win_x, win_y, 0].name);
+                block_map[win_x, win_y, 0].gameObject.GetComponent<SpriteRenderer>().sprite = WinSprite;
+                block_map[win_x, win_y, 0].gameObject.GetComponent<SpriteRenderer>().color = Color.white;
+            }
+        }
+        if (isWin) return;
         if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
             Move(0);
         if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
@@ -75,10 +119,14 @@ public class GameController : SingletonBase<GameController>
             Move(3);
         if (Input.GetKeyDown(KeyCode.R))
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        if (Input.GetKeyDown(KeyCode.Z))
+            Undo();
     }
     bool BFSMove(int Dir)
     {
+        //Block[,,] tmpMove = block_map;
         bool flag = true;
+        int num = 1;
         Queue<int> qx = new Queue<int>(), qy = new Queue<int>();
         List<Block> BlockToMove = new List<Block>();
         HashSet<Tuple<int, int>> hashmap = new HashSet<Tuple<int, int>>();
@@ -114,6 +162,8 @@ public class GameController : SingletonBase<GameController>
             }
             else
             {
+                num++;
+                //print(t);
                 qx.Enqueue(new_x);
                 qy.Enqueue(new_y);
                 if (t >= 5 && t <= 10)
@@ -133,8 +183,22 @@ public class GameController : SingletonBase<GameController>
                 }
             }
         }
+        if (num > 2) flag = false;
+        if (Human.z == 0)
+            if ((block_map[human_x + dx[Dir], human_y + dy[Dir], 1].type == 0))
+                flag = false;
+
         if (flag)
         {
+            OldMap.Add(new int[Vertical, Horizontal, 2]);
+            for (int i = 0; i < Vertical; i++)
+                for (int j = 0; j < Horizontal; j++)
+                    for (int k = 0; k < 2; k++)
+                    {
+                        OldMap[OldMap.Count - 1][i, j, k] = block_map[i, j, k].type;
+                        //if (block_map[i, j, k].NeedToBeUpdate()) print("Debug "+i.ToString()+" "+j.ToString());
+                        //block_map[i, j, k].ChangeToType(OldMap[OldMap.Count - 1][i, j, k]);
+                    }
             BlockToMove.Sort((a, b) => ((b.x * dx[Dir]) + (b.y * dy[Dir])).CompareTo((a.x * dx[Dir]) + (a.y * dy[Dir])));
             foreach (var m_block in BlockToMove)
             {
@@ -161,9 +225,20 @@ public class GameController : SingletonBase<GameController>
         int oldz = Human.z;
         if (BFSMove(Dir))
         {
+            UpdateHuman();
+            if (human_x == win_x && human_y == win_y && Human.z == 0)
+            {
+                StartCoroutine(Win());
+                print("WIN!");
+            }
 
-            if (block_map[oldx, oldy, 1].type == 2 && oldz == 0)
+            int t = block_map[oldx, oldy, 1].type;
+            if (t == 2 && oldz == 0)
                 block_map[oldx, oldy, 1].ChangeToType(0);
+
+            if (t >= 5 && t <= 7 && oldz == 0 && block_map[human_x, human_y, 1].type != t)
+                foreach (var m_block in GetFriend(block_map[oldx, oldy, 1]))
+                    m_block.ChangeToType(0);
             //Move Audio
         }
         else
@@ -171,20 +246,7 @@ public class GameController : SingletonBase<GameController>
             //Not Move Audio;
         }
         CheckDown();
-        foreach (var m_block in FindObjectsOfType<Block>())
-        {
-            block_map[m_block.x, m_block.y, m_block.z] = m_block;
-            if (m_block.type == 3)
-            {
-                human_x = m_block.x;
-                human_y = m_block.y;
-                Human = m_block;
-            }
-        }
-        if (human_x == win_x && human_y == win_y && Human.z == 0)
-        {
-            print("WIN!");
-        }
+
         /*
         int new_x = human_x + dx[Dir];
         int new_y = human_y + dy[Dir];
@@ -202,6 +264,14 @@ public class GameController : SingletonBase<GameController>
                         l.Add(block_map[i, j, k]);
                 }
         return l;
+    }
+    IEnumerator Win()
+    {
+        isWin = true;
+        WinText.DOFade(1, 1f);
+        yield return new WaitForSeconds(1);
+        if (SceneManager.GetActiveScene().buildIndex + 1 < SceneManager.sceneCountInBuildSettings)
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
     void CheckDown()
     {

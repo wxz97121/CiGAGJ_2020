@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.WSA;
+//using UnityEngine.WSA;
 
 [ExecuteInEditMode]
 public class EditorSpawn : MonoBehaviour
@@ -44,7 +44,7 @@ public class EditorSpawn : MonoBehaviour
     }
     private void Update()
     {
-        //if (UnityEngine.Application.isPlaying) return;
+        if (UnityEngine.Application.isPlaying) return;
         row = Vertical;
         line = Horizontal;
         block_map = new Block[row, line, 2];

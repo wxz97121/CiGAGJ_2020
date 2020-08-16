@@ -58,11 +58,21 @@ public class Block : MonoBehaviour
         //friend.Clear();
         _type = target;
         type = target;
+        GetComponent<SpriteRenderer>().color = Color.white;
         //print(z);
         if (z == 1)
+        {
             GetComponent<SpriteRenderer>().sprite = GameController.Instance.DownSprite[_type];
+            GetComponent<SpriteRenderer>().sortingOrder = -10;
+            if (type != 4) GetComponent<SpriteRenderer>().sortingOrder = -5;
+        }
         if (z == 0)
+        {
             GetComponent<SpriteRenderer>().sprite = GameController.Instance.UpSprite[_type];
+            if (Application.isPlaying)
+                if (type == 0) GetComponent<SpriteRenderer>().color = Color.clear;
+            GetComponent<SpriteRenderer>().sortingOrder = 0;
+        }
         //TODO：更新Sprite
 
         //if ()
@@ -116,6 +126,7 @@ public class Block : MonoBehaviour
 
     }
     */
+
     public int Move(int Dir, bool force = false)
     {
         print("Debug " + x.ToString() + " " + y.ToString());
