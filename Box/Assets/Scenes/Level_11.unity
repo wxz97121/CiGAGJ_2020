@@ -2935,7 +2935,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 80ae663619d52644299a856543ac32ae, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 961a81994bef5194f9022dddbb2c82b5, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -4177,7 +4177,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: -4
   m_Sprite: {fileID: 21300000, guid: b546909d4173cd448ab1e9092de6a7de, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -4682,7 +4682,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 80ae663619d52644299a856543ac32ae, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 961a81994bef5194f9022dddbb2c82b5, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -14911,7 +14911,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: -4
   m_Sprite: {fileID: 21300000, guid: 37e112d314594854e84bec0cda672b8b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -15122,7 +15122,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 80ae663619d52644299a856543ac32ae, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 961a81994bef5194f9022dddbb2c82b5, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -16102,7 +16102,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 80ae663619d52644299a856543ac32ae, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 961a81994bef5194f9022dddbb2c82b5, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -21647,7 +21647,7 @@ PrefabInstance:
     - target: {fileID: 5585900580118675552, guid: a8daf59cee1d8f04f9c90392ae6a4f75,
         type: 3}
       propertyPath: WinY
-      value: 12
+      value: 11
       objectReference: {fileID: 0}
     - target: {fileID: 5585900580118675554, guid: a8daf59cee1d8f04f9c90392ae6a4f75,
         type: 3}
@@ -21723,6 +21723,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalScale.y
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5585900580118675615, guid: a8daf59cee1d8f04f9c90392ae6a4f75,
+        type: 3}
+      propertyPath: UseWinSprite
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8776086475567349840, guid: a8daf59cee1d8f04f9c90392ae6a4f75,
         type: 3}

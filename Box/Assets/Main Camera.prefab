@@ -748,8 +748,8 @@ MonoBehaviour:
   Vertical: 7
   UpSprite:
   - {fileID: 21300000, guid: d43092dc36b81eb40b304bd1fcf10337, type: 3}
-  - {fileID: 21300000, guid: ae5b65269201e51498875bc8d077d13c, type: 3}
-  - {fileID: 21300000, guid: 5c53efa8d61fe034196d245de14d97ed, type: 3}
+  - {fileID: 21300000, guid: 16bb5e6a1220ceb4fbbc9fce59382f24, type: 3}
+  - {fileID: 21300000, guid: e0692ec2d2e8aea4e89aeeed8015e58d, type: 3}
   - {fileID: 21300000, guid: 560dd383acefec04e9bb07c15f6bcc5a, type: 3}
   - {fileID: 21300000, guid: 8f8c7f1cc633b59438211194778bf384, type: 3}
   - {fileID: 21300000, guid: 961a81994bef5194f9022dddbb2c82b5, type: 3}
@@ -760,8 +760,8 @@ MonoBehaviour:
   - {fileID: 21300000, guid: ff0623693efbfcf4c8a81ad2d6101828, type: 3}
   DownSprite:
   - {fileID: 21300000, guid: a32545f7b1fdbb2408a07f5b383a197f, type: 3}
-  - {fileID: 21300000, guid: 1f31ff563a64b934b92657d3ca8df6f1, type: 3}
-  - {fileID: 21300000, guid: f3d4228c0f60ef040899bec5b36207d8, type: 3}
+  - {fileID: 21300000, guid: 43ee603bc4a0ef54da1d91700e0b9788, type: 3}
+  - {fileID: 21300000, guid: 80c040f7cd2cf0e4fa105f0cf246c835, type: 3}
   - {fileID: 21300000, guid: fab1fdc47b263494fac80e3798386b80, type: 3}
   - {fileID: 21300000, guid: 388a20f303e8e054cb580a684cbd747e, type: 3}
   - {fileID: 21300000, guid: 8f655f0ef1314914cae71ac6a78b7f32, type: 3}
@@ -775,6 +775,8 @@ MonoBehaviour:
   isWhite: 0
   OldImage: {fileID: 0}
   NewImage: {fileID: 0}
+  LinePrefab: {fileID: 5562824804107886418, guid: 99efd418c2deb2640823cd83c034a792,
+    type: 3}
 --- !u!1 &5866667356751077901
 GameObject:
   m_ObjectHideFlags: 0

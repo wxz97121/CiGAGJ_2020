@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -56,8 +57,11 @@ public class GameController : SingletonBase<GameController>
     private AudioSource box_push, carton_crack, carton_drop, walk, wood_drop, fail;
     public bool isWhite = false;
     public Image OldImage, NewImage;
+    public GameObject LinePrefab;
+    private List<GameObject> LineList;
     private void Start()
     {
+        LineList = new List<GameObject>();
         box_push = transform.Find("box_push").GetComponent<AudioSource>();
         carton_crack = transform.Find("carton_crack").GetComponent<AudioSource>();
         carton_drop = transform.Find("carton_drop").GetComponent<AudioSource>();
@@ -76,6 +80,58 @@ public class GameController : SingletonBase<GameController>
         block_map = new Block[Vertical, Horizontal, 2];
         //block_map = new Block[row, line, 2];
         UpdateHuman();
+        UpdateLine();
+    }
+    GameObject SpawnLine(Block mb, int dir)
+    {
+        var go = Instantiate(LinePrefab, mb.transform);
+        go.transform.localScale = new Vector3(1, 1.5f   , 1);
+        if (dir == 0)
+        {
+            go.transform.localPosition = new Vector3(0, 0, 0);
+            go.transform.localRotation = Quaternion.identity;
+        }
+        if (dir == 1)
+        {
+            go.transform.localPosition = new Vector3(0, -0.5f, 0);
+            go.transform.localRotation = Quaternion.identity;
+        }
+        if (dir == 2)
+        {
+            go.transform.localPosition = new Vector3(0, 0, 0);
+            go.transform.localRotation = Quaternion.Euler(0, 0, -90);
+        }
+        if (dir == 3)
+        {
+            go.transform.localPosition = new Vector3(0.5f, 0, 0);
+            go.transform.localRotation = Quaternion.Euler(0, 0, -90);
+        }
+        return go;
+    }
+    void UpdateLine()
+    {
+        LinePrefab.transform.localScale = Camera.main.transform.localScale;
+        foreach (var go in LineList)
+            Destroy(go);
+        LineList.Clear();
+        for (int i = 0; i < Vertical; i++)
+            for (int j = 0; j < Horizontal; j++)
+                for (int k = 0; k < 2; k++)
+                {
+                    var m_block = block_map[i, j, k];
+                    if (m_block.type >= 5 && m_block.type <= 10)
+                    {
+                        if (i - 1 >= 0 && block_map[i - 1, j, k].type != m_block.type)
+                            LineList.Add(SpawnLine(m_block, 0));
+                        //LineList.Add(Instantiate(LinePrefab, new Vector3(0.5f * j, -0.5f * i, k * 0.5f), Quaternion.Euler(0, 0, 0)));
+                        if (i + 1 < Vertical && block_map[i + 1, j, k].type != m_block.type)
+                            LineList.Add(SpawnLine(m_block, 1));
+                        if (j - 1 >= 0 && block_map[i, j - 1, k].type != m_block.type)
+                            LineList.Add(SpawnLine(m_block, 2));
+                        if (j + 1 < Horizontal && block_map[i, j + 1, k].type != m_block.type)
+                            LineList.Add(SpawnLine(m_block, 3));
+                    }
+                }
     }
     void UpdateHuman()
     {
@@ -105,6 +161,7 @@ public class GameController : SingletonBase<GameController>
                 }
         OldMap.RemoveAt(OldMap.Count - 1);
         UpdateHuman();
+        UpdateLine();
     }
     private void Update()
     {
@@ -249,6 +306,7 @@ public class GameController : SingletonBase<GameController>
         if (BFSMove(Dir))
         {
             UpdateHuman();
+            UpdateLine();
             if (human_x == win_x && human_y == win_y && Human.z == 0)
             {
                 StartCoroutine(Win());
@@ -303,6 +361,19 @@ public class GameController : SingletonBase<GameController>
         yield return new WaitForSeconds(2.5f);
         if (SceneManager.GetActiveScene().buildIndex + 1 < SceneManager.sceneCountInBuildSettings)
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        else
+        {
+            OldImage.color = Color.clear;
+            /*
+            NewImage.DOFade(0.8f, 0.25f);
+            yield return new WaitForSeconds(1f);
+            NewImage.DOFade(0.6f, 0.2f);
+            yield return new WaitForSeconds(0.8f);
+            NewImage.DOFade(0.3f, 0.2f);
+            yield return new WaitForSeconds(1.5f);*/
+            NewImage.DOFade(0f, 3f);
+            WinText.DOFade(1, 3f);
+        }
     }
     void CheckDown()
     {
